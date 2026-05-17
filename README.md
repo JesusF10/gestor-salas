@@ -11,6 +11,44 @@ El proyecto utiliza una Arquitectura Híbrida y Compacta:
 - Frontend: Django Templates con interactividad (CDN).
 - Base de Datos: PostgreSQL.
 
+### Modelo de Base de Datos
+
+```mermaid
+erDiagram
+    usuarios {
+        integer id PK
+        varchar username
+        varchar password
+        varchar rol
+    }
+    salas {
+        integer id PK
+        integer numero_sala
+        integer capacidad
+    }
+    encargados {
+        integer id PK
+        text nombre
+        text primerapellido
+        text segundoapellido
+    }
+    eventos {
+        integer id PK
+        text nombre
+        date fecha
+        time hora_inicio
+        time hora_fin
+        text_array asistentes
+        text_array requerimientos
+        text_array incidentes
+        integer encargado_id FK
+        integer sala_id FK
+    }
+
+    eventos }|--|| encargados : "encargado_id"
+    eventos }|--|| salas : "sala_id"
+```
+
 ### Estructura de Directorios
 
 ```
