@@ -72,8 +72,6 @@ erDiagram
 
 1. Gestor de paquetes: Es obligatorio usar uv. Verifica su instalación visitando la página oficial
    de [uv](https://docs.astral.sh/uv/).
-2. Base de Datos: Tener una instancia de PostgreSQL corriendo con las credenciales especificadas en
-   `src/config/settings.py`.
 
 ### Pasos para iniciar:
 
