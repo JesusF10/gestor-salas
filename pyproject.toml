@@ -1,0 +1,74 @@
+[project]
+name = "gestor-salas-backend"
+version = "0.1.0"
+authors = [
+    {name = "Jesus Flores Lacarra", email = "jss.263.fsc@gmail.com"},
+    # Pueden ponerse aqui
+]
+description = "Sistema de gestión de salas."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.14"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: Django",
+    "Framework :: Django :: 6.0",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
+keywords = ["gestor", "salas", "interactivas", "django", "python"]
+dependencies = [
+    "django>=6.0.5",
+    "django-stubs>=6.0.4",
+    "psycopg[binary]>=3.2.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/JesusF10/gestor-salas"
+Repository = "https://github.com/JesusF10/gestor-salas"
+
+dependencies = [
+    "django>=6.0.5",
+    "django-stubs>=6.0.4",
+    "psycopg[binary]>=3.2.4",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.9.6",
+    "ty>=0.0.6",
+    "pytest>=6.0.0",
+]
+
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+indent-width = 4
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "T20", "RET", "SIM", "ARG", "PTH", "ERA", "PL", "RUF"]
+ignore = ["PLC0415", "PLR0913"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["xps_analyzer"]
+section-order = ["future", "standard-library", "first-party", "local-folder", "third-party"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ty.rules]
+index-out-of-bounds = "warn"
+possibly-missing-attribute = "error"
+possibly-missing-import = "error"
+redundant-cast = "ignore"
+unused-ignore-comment = "warn"
+
+[tool.django-stubs]
+django_settings_module = "config.settings"
