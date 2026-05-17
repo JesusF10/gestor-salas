@@ -1,0 +1,44 @@
+
+// Diagrama en lenguaje DBML para la base de datos de gestor de salas
+// Pueden visualizarse en https://dbdiagram.io/
+
+Table encargados {
+  id integer [primary key, increment]
+  nombre text [not null]
+  primerapellido text [not null]
+  segundoapellido text
+}
+
+Table eventos {
+  id integer [primary key, increment]
+  nombre text [not null]
+  fecha date [not null]
+  hora_inicio time [not null]
+  hora_fin time [not null]
+  asistentes "text[]" [not null]
+  requerimientos "text[]"
+  incidentes "text[]"
+  encargado_id integer
+  sala_id integer
+}
+
+Table salas {
+  id integer [primary key, increment]
+  numero_sala integer [not null, unique]
+  capacidad integer [default: 40]
+
+  note: "Capacidad predeterminada: 40 personas (120 entre las 3 salas)"
+}
+
+Table usuarios {
+  id integer [primary key]
+  username varchar
+  password varchar
+  rol varchar
+
+  note: "Valores: admin, operativo. Público no se registra"
+}
+
+// Definición de referencias externas
+Ref: eventos.encargado_id > encargados.id
+Ref: eventos.sala_id > salas.id

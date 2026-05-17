@@ -45,8 +45,8 @@ del Sistema Gestor de Salas. Los pilares fundamentales de la solución son:
 
 - **Control de disponibilidad en tiempo real:** Consulta inmediata del estado de cada espacio
   físico.
-- **Validación automática:** Algoritmia en el backend que impide de forma absoluta el registro de
-  agendas duplicadas en la misma hora y lugar.
+- **Validación automática:** Funcionamiento en el backend que impide, de forma absoluta, el registro
+  de agendas duplicadas en la misma hora y lugar.
 - **Calendario interactivo:** Interfaz gráfica intuitiva para visualizar de forma rápida la
   ocupación diaria, semanal o mensual de las salas.
 
