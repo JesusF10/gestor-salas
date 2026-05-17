@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+<!--  -->
+{% block title %}Listado de Salas{% endblock %}
+<!--  -->
+{% block content %}
+<h2>Listado de Salas Disponibles</h2>
+<p>Consulta la capacidad y disponibilidad de las salas físicas.</p>
+
+<div id="salas-container">
+    <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px">
+        <thead>
+            <tr style="background: #ecf0f1">
+                <th style="padding: 10px">ID</th>
+                <th style="padding: 10px">Número de Sala</th>
+                <th style="padding: 10px">Capacidad</th>
+                <th style="padding: 10px">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for sala in salas %}
+            <tr>
+                <td style="padding: 10px; text-align: center">{{ sala.id }}</td>
+                <td style="padding: 10px; text-align: center">
+                    Sala {{ sala.numero_sala }}
+                </td>
+                <td style="padding: 10px; text-align: center">
+                    {{ sala.capacidad }} personas
+                </td>
+                <td style="padding: 10px; text-align: center">
+                    <a href="{% url 'sala-detail' pk=sala.id %}" class="btn"
+                        >Ver Detalle</a
+                    >
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="4" style="padding: 10px; text-align: center">
+                    No hay salas registradas.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Ejemplo de integración con Vue para un componente interactivo -->
+<div style="margin-top: 40px; padding: 20px; border: 1px dashed #7f8c8d">
+    <h3>Prueba de Vue.js + Django</h3>
+    <p>Este contador es manejado por Vue.js dentro de la plantilla de Django.</p>
+    <button @click="count++" class="btn">Contador: [[ count ]]</button>
+</div>
+{% endblock %}
+<!--  -->
+{% block extra_js %}
+<script>
+    createApp({
+        delimiters: ["[[", "]]"],
+        data() {
+            return {
+                count: 0,
+            };
+        },
+    }).mount("#app");
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Gestor de Salas{% endblock %}</title>
+    <!-- Vue.js CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Estilos simples -->
+    <style>
+        body { font-family: sans-serif; margin: 0; padding: 20px; background-color: #f4f4f9; }
+        header { background: #2c3e50; color: white; padding: 1rem; margin-bottom: 20px; border-radius: 8px; }
+        nav a { color: white; margin-right: 15px; text-decoration: none; }
+        .container { max-width: 1200px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn { padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; }
+        .btn:hover { background: #2980b9; }
+    </style>
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+    <header>
+        <nav>
+            <strong>Gestor de Salas</strong> |
+            <a href="{% url 'sala-list' %}">Salas</a>
+            <a href="{% url 'encargado-list' %}">Encargados</a>
+            {% if user.is_authenticated %}
+                <span>Hola, {{ user.username }}</span>
+            {% else %}
+                <a href="{% url 'login' %}">Login</a>
+            {% endif %}
+        </nav>
+    </header>
+
+    <div id="app" class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        const { createApp } = Vue;
+    </script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>
