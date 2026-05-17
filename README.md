@@ -58,9 +58,8 @@ Para cumplir con los requerimientos de la materia:
 
 1. DDL (Estructura) -> Django ORM: Las tablas, columnas y relaciones se definen en los archivos
    `models.py` de cada app. No usar SQL manual para crear tablas.
-2. DML (Datos) -> SQL Puro: Está estrictamente prohibido usar el ORM para manipular registros. Toda
-   operación (SELECT, INSERT, UPDATE, DELETE) debe hacerse mediante SQL crudo usando
-   `connection.cursor()` en los archivos `services.py`.
+2. DML (Datos) -> SQL Puro: Toda operación (SELECT, INSERT, UPDATE, DELETE) debe hacerse mediante
+   SQL crudo usando `connection.cursor()` en los archivos `services.py`.
 3. Frontend: El proyecto es un monolito. Usa `base.html` e inyecta componentes o templates HTML.
 4. Formateo: Se utiliza Ruff para Python y Prettier para HTML. Los templates están protegidos en
    `.prettierignore`.
@@ -69,8 +68,12 @@ Para cumplir con los requerimientos de la materia:
 
 - Usuario: admin
 - Password: admin123
-- URL Login: http://localhost:8000/usuarios/login/
+- URL Login: http://localhost:8000
+
+> Nota: Se pueden modificar las credenciales en el script `setup.sh`.
 
 ---
 
-Desarrollado para la materia de Bases de Datos I.
+Desarrollado para la materia de Bases de Datos I como proyecto final.
+
+Licencia: MIT
