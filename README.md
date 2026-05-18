@@ -123,11 +123,9 @@ Para cumplir con los requerimientos de la materia:
 
 ## Credenciales de Prueba (Local)
 
-- Usuario: admin
-- Password: admin123
-- URL Login: http://localhost:8000
-
-> Nota: Se pueden modificar las credenciales en el script `setup.sh`.
+- Local: `http://localhost:8000` (se observa al ejecutar `uv run python src/manage.py runserver`)
+- Usuario: el que se crea automáticamente en el script `setup.sh`
+- Contraseña: la que se define en el script `setup.sh`
 
 ---
 

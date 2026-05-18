@@ -1,0 +1,51 @@
+name: Django CI
+
+on:
+    push:
+        branches: ["main", "master"]
+    pull_request:
+        branches: ["main", "master"]
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        services:
+            postgres:
+                image: postgres:15
+                env:
+                    POSTGRES_DB: gestor_salas
+                    POSTGRES_USER: postgres
+                    POSTGRES_PASSWORD: password
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Install uv
+              uses: astral-sh/setup-uv@v5
+              with:
+                  enable-cache: true
+                  version: "latest"
+
+            - name: Set up Python
+              run: uv python install
+
+            - name: Install dependencies
+              run: uv sync --all-groups
+
+            - name: Run Django System Check
+              run: uv run python src/manage.py check
+              env:
+                  DB_PASSWORD: password
+
+            - name: Run Tests
+              run: uv run python src/manage.py test apps
+              env:
+                  DB_PASSWORD: password
