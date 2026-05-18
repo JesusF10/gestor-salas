@@ -1,5 +1,5 @@
 [project]
-name = "gestor-salas-backend"
+name = "gestor-salas"
 version = "0.1.0"
 authors = [
     {name = "Jesus Flores Lacarra", email = "jss.263.fsc@gmail.com"},
@@ -20,15 +20,6 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 keywords = ["gestor", "salas", "interactivas", "django", "python"]
-dependencies = [
-    "django>=6.0.5",
-    "django-stubs>=6.0.4",
-    "psycopg[binary]>=3.2.4",
-]
-
-[project.urls]
-Homepage = "https://github.com/JesusF10/gestor-salas"
-Repository = "https://github.com/JesusF10/gestor-salas"
 
 dependencies = [
     "django>=6.0.5",
@@ -41,8 +32,12 @@ dev = [
     "ruff>=0.9.6",
     "ty>=0.0.6",
     "pytest>=6.0.0",
+    "dotenv>=0.9.9",
 ]
 
+[project.urls]
+Homepage = "https://github.com/JesusF10/gestor-salas"
+Repository = "https://github.com/JesusF10/gestor-salas"
 
 [tool.ruff]
 line-length = 88
@@ -54,7 +49,6 @@ select = ["E", "F", "I", "N", "UP", "B", "A", "C4", "T20", "RET", "SIM", "ARG", 
 ignore = ["PLC0415", "PLR0913"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["xps_analyzer"]
 section-order = ["future", "standard-library", "first-party", "local-folder", "third-party"]
 
 [tool.ruff.format]
