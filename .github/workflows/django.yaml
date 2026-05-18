@@ -1,17 +1,17 @@
 name: Django CI
 
 on:
-    push:
-        branches: ["main", "master"]
-    pull_request:
-        branches: ["main", "master"]
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
-
+    
     services:
       postgres:
         image: postgres:15
@@ -45,12 +45,17 @@ jobs:
     - name: Run Django System Check
       run: uv run python src/manage.py check
       env:
+        DB_NAME: gestor_salas
+        DB_USER: postgres
         DB_PASSWORD: password
         DB_HOST: localhost
+        DB_PORT: 5432
 
     - name: Run Tests
       run: uv run python src/manage.py test apps
       env:
+        DB_NAME: gestor_salas
+        DB_USER: postgres
         DB_PASSWORD: password
         DB_HOST: localhost
-
+        DB_PORT: 5432
