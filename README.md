@@ -72,6 +72,27 @@ erDiagram
 
 1. Gestor de paquetes: Es obligatorio usar uv. Verifica su instalación visitando la página oficial
    de [uv](https://docs.astral.sh/uv/).
+2. Base de datos: Es obligatorio usar PostgreSQL.
+3. Tener creada la base de datos `gestor_salas`, para ello hay que apoyarse de `psql` (en terminal)
+   o `pgAdmin` (interfaz gráfica). Se necesitan los valores de conexión a la base de datos:
+
+- `DB_NAME`: Nombre de la base de datos (por defecto `gestor_salas`).
+- `DB_USER`: Usuario de la base de datos.
+- `DB_PASSWORD`: Contraseña del usuario de la base de datos.
+- `DB_HOST`: Host de la base de datos (por defecto `localhost`).
+- `DB_PORT`: Puerto de la base de datos (por defecto `5432`).
+- `SECRET_KEY`: Clave secreta para la aplicación.
+
+```bash
+# .env
+DB_NAME=gestor_salas
+DB_USER=...
+DB_PASSWORD=...
+DB_HOST=...
+DB_PORT=...
+SECRET_KEY=...
+
+```
 
 ### Pasos para iniciar:
 
