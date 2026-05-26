@@ -1,43 +1,156 @@
+{% load static %}
 <!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Gestor de Salas{% endblock %}</title>
-    <!-- Vue.js CDN -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- Estilos simples -->
-    <style>
-        body { font-family: sans-serif; margin: 0; padding: 20px; background-color: #f4f4f9; }
-        header { background: #2c3e50; color: white; padding: 1rem; margin-bottom: 20px; border-radius: 8px; }
-        nav a { color: white; margin-right: 15px; text-decoration: none; }
-        .container { max-width: 1200px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .btn { padding: 8px 16px; background: #3498db; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .btn:hover { background: #2980b9; }
-    </style>
-    {% block extra_head %}{% endblock %}
-</head>
-<body>
-    <header>
-        <nav>
-            <strong>Gestor de Salas</strong> |
-            <a href="{% url 'sala-list' %}">Salas</a>
-            <a href="{% url 'encargado-list' %}">Encargados</a>
-            {% if user.is_authenticated %}
-                <span>Hola, {{ user.username }}</span>
-            {% else %}
-                <a href="{% url 'login' %}">Login</a>
-            {% endif %}
-        </nav>
-    </header>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <div id="app" class="container">
-        {% block content %}{% endblock %}
-    </div>
+        <title>{% block title %}Sistema Gestor de Salas{% endblock %}</title>
 
-    <script>
-        const { createApp } = Vue;
-    </script>
-    {% block extra_js %}{% endblock %}
-</body>
+        <!-- Bootstrap 5.3 CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+
+        <!-- Bootstrap Icons -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+            rel="stylesheet"
+        />
+
+        <!-- FullCalendar 6 -->
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+
+        <!-- Vue.js 3 CDN -->
+        <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+        <!-- Hoja de estilos principal -->
+        <link rel="stylesheet" href="{% static 'reservas/css/style.css' %}" />
+
+        {% block extra_head %}{% endblock %}
+    </head>
+
+    <body>
+        <div class="d-flex">
+            <!-- =============================================
+         SIDEBAR DE NAVEGACIÓN
+         ============================================= -->
+            <div class="sidebar p-3">
+                <h3 class="logo">Salas</h3>
+
+                <ul class="nav flex-column mt-4">
+                    <li class="nav-item mb-2">
+                        <a
+                            href="{% url 'dashboard' %}"
+                            class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}"
+                        >
+                            <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                        </a>
+                    </li>
+
+                    {% if user.is_authenticated %}
+                    <li class="nav-item mb-2">
+                        <a
+                            href="{% url 'evento-create' %}"
+                            class="nav-link {% if request.resolver_match.url_name == 'evento-create' %}active{% endif %}"
+                        >
+                            <i class="bi bi-plus-circle-fill"></i> Nuevo Evento
+                        </a>
+                    </li>
+                    {% endif %}
+
+                    <li class="nav-item mb-2">
+                        <a
+                            href="{% url 'eventos-lista' %}"
+                            class="nav-link {% if request.resolver_match.url_name == 'eventos-lista' %}active{% endif %}"
+                        >
+                            <i class="bi bi-calendar-event-fill"></i> Eventos
+                        </a>
+                    </li>
+
+                    {% if user.is_authenticated %}
+                    <li class="nav-item mb-2">
+                        <a
+                            href="{% url 'sala-list' %}"
+                            class="nav-link {% if request.resolver_match.url_name == 'sala-list' %}active{% endif %}"
+                        >
+                            <i class="bi bi-door-open-fill"></i> Salas
+                        </a>
+                    </li>
+
+                    <li class="nav-item mb-2">
+                        <a
+                            href="{% url 'reportes' %}"
+                            class="nav-link {% if request.resolver_match.url_name == 'reportes' %}active{% endif %}"
+                        >
+                            <i class="bi bi-clipboard2-data-fill"></i> Reportes
+                        </a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+            <!-- fin sidebar -->
+
+            <!-- =============================================
+         ÁREA PRINCIPAL DE CONTENIDO
+         ============================================= -->
+            <div class="content w-100">
+                <!-- Navbar superior -->
+                <nav
+                    class="navbar navbar-expand-lg navbar-light bg-white shadow-sm px-4"
+                >
+                    <div class="container-fluid d-flex justify-content-between">
+                        <span class="navbar-brand fw-bold">
+                            {% block page_title %}Sistema Gestor de Salas{% endblock %}
+                        </span>
+
+                        {% if user.is_authenticated %}
+
+                        <div class="d-flex align-items-center gap-3">
+                            <span class="fw-semibold text-primary">
+                                👤 {{ user.username }}
+                            </span>
+
+                            <!-- Cerrar sesión con POST (seguro contra CSRF) -->
+                            <form method="POST" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-box-arrow-right me-1"></i> Cerrar
+                                    Sesión
+                                </button>
+                            </form>
+                        </div>
+
+                        {% else %}
+
+                        <a href="{% url 'login' %}" class="btn btn-primary btn-sm">
+                            <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+                        </a>
+
+                        {% endif %}
+                    </div>
+                </nav>
+
+                <!-- Contenido de cada página -->
+                <div id="app" class="container-fluid p-4">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+            <!-- fin content -->
+        </div>
+
+        <!-- Bootstrap 5 JS Bundle -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <!-- calendar.js: inicializa FullCalendar si existe #calendar en la página -->
+        <script src="{% static 'reservas/js/calendar.js' %}"></script>
+
+        <!-- Vue mount base -->
+        <script>
+            const { createApp } = Vue;
+        </script>
+
+        {% block extra_js %}{% endblock %}
+    </body>
 </html>

@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Evento — Gestor de Salas{% endblock %}
+{% block page_title %}Editar Evento{% endblock %}
+
+{% block content %}
+
+<div class="card border-0 shadow-sm rounded-4">
+
+    <div class="card-body p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0 text-primary">
+                <i class="bi bi-pencil-square me-2"></i>Editar Evento
+            </h2>
+            <!-- Botón eliminar → abre modal de confirmación -->
+            <button
+                type="button"
+                class="btn btn-danger btn-sm"
+                data-bs-toggle="modal"
+                data-bs-target="#modalEliminar"
+            >
+                <i class="bi bi-trash-fill me-1"></i> Eliminar Evento
+            </button>
+        </div>
+
+        {% if error %}
+        <div class="alert alert-danger d-flex align-items-start gap-3 rounded-3" role="alert">
+            <i class="bi bi-exclamation-octagon-fill fs-5 flex-shrink-0 mt-1"></i>
+            <div>
+                <div class="fw-semibold mb-1">No se pudieron guardar los cambios</div>
+                <div>{{ error }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'evento-editar' pk=evento.id %}">
+
+            {% csrf_token %}
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nombre del Evento</label>
+                    <input type="text" class="form-control" name="nombre" value="{{ evento.nombre }}" required>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" class="form-control" name="fecha" value="{{ evento.fecha|date:'Y-m-d' }}" required>
+                </div>
+
+                <!-- Hora inicio y fin -->
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Hora de Inicio</label>
+                    <input type="time" class="form-control" name="hora_inicio" value="{{ evento.hora_inicio|time:'H:i' }}" required>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Hora de Fin</label>
+                    <input type="time" class="form-control" name="hora_fin" value="{{ evento.hora_fin|time:'H:i' }}" required>
+                </div>
+
+                <!-- Encargado: texto libre -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Encargado</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="encargado"
+                        value="{{ evento.encargado }}"
+                        required
+                    >
+                </div>
+
+                <!-- Sala: select dinámico desde BD -->
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Sala</label>
+                    <select class="form-select" name="sala_id" required>
+                        {% for sala in salas %}
+                        <option value="{{ sala.id }}" {% if sala.id == evento.sala_id %}selected{% endif %}>
+                            Sala {{ sala.numero_sala }} ({{ sala.capacidad }} personas)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+
+            <hr>
+
+            <h4 class="fw-bold mt-4 mb-3">Requerimientos</h4>
+
+            <div class="row">
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            name="requerimientos" value="Equipo de Sonido" id="sonido"
+                            {% if 'Equipo de Sonido' in evento.requerimientos %}checked{% endif %}>
+                        <label class="form-check-label" for="sonido">
+                            <i class="bi bi-speaker-fill me-1" style="color:#2563eb;"></i> Equipo de Sonido
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            name="requerimientos" value="Cafetería" id="cafeteria"
+                            {% if 'Cafetería' in evento.requerimientos %}checked{% endif %}>
+                        <label class="form-check-label" for="cafeteria">
+                            <i class="bi bi-cup-hot-fill me-1" style="color:#2563eb;"></i> Cafetería
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            name="requerimientos" value="Video Conferencia" id="video"
+                            {% if 'Video Conferencia' in evento.requerimientos %}checked{% endif %}>
+                        <label class="form-check-label" for="video">
+                            <i class="bi bi-camera-video-fill me-1" style="color:#2563eb;"></i> Video Conferencia
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            name="requerimientos" value="Acomodo de Sillas" id="sillas"
+                            {% if 'Acomodo de Sillas' in evento.requerimientos %}checked{% endif %}>
+                        <label class="form-check-label" for="sillas">
+                            <i class="bi bi-layout-three-columns me-1" style="color:#2563eb;"></i> Acomodo de Sillas
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox"
+                            name="requerimientos" value="Proyector" id="proyector"
+                            {% if 'Proyector' in evento.requerimientos %}checked{% endif %}>
+                        <label class="form-check-label" for="proyector">
+                            <i class="bi bi-projector-fill me-1" style="color:#2563eb;"></i> Proyector
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-primary px-4">
+                    <i class="bi bi-floppy-fill me-1"></i> Guardar Cambios
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Cancelar
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- =============================================
+     MODAL DE CONFIRMACIÓN: Eliminar Evento
+     ============================================= -->
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-labelledby="modalEliminarLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="border-radius:20px;border:none;">
+
+            <div class="modal-header" style="border-bottom:1px solid #f1f5f9;">
+                <h5 class="modal-title fw-bold" id="modalEliminarLabel" style="color:#dc2626;">
+                    <i class="bi bi-trash-fill me-2"></i>Confirmar Eliminación
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+
+            <div class="modal-body py-4">
+                <p class="mb-1" style="color:#334155;">
+                    ¿Estás seguro de que deseas eliminar el evento
+                    <strong>{{ evento.nombre }}</strong>?
+                </p>
+                <p class="text-muted" style="font-size:0.88rem;">
+                    Esta acción no se puede deshacer.
+                </p>
+            </div>
+
+            <div class="modal-footer" style="border-top:1px solid #f1f5f9;">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <i class="bi bi-x-circle me-1"></i> Cancelar
+                </button>
+                <form method="POST" action="{% url 'evento-eliminar' pk=evento.id %}" style="display:inline;">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                        <i class="bi bi-trash-fill me-1"></i> Sí, eliminar
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+{% endblock %}

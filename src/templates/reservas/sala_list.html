@@ -1,65 +1,114 @@
 {% extends "base.html" %}
-<!--  -->
-{% block title %}Listado de Salas{% endblock %}
-<!--  -->
+
+{% block title %}Listado de Salas — Gestor de Salas{% endblock %}
+{% block page_title %}Gestión de Salas{% endblock %}
+
 {% block content %}
-<h2>Listado de Salas Disponibles</h2>
-<p>Consulta la capacidad y disponibilidad de las salas físicas.</p>
+<div class="row">
+    <div class="col-12">
+        <div class="card p-4 shadow-sm border-0 rounded-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h3 class="fw-bold mb-1 text-primary">
+                        <i class="bi bi-door-open-fill me-2"></i>Salas Físicas
+                    </h3>
+                    <p class="text-muted mb-0">Consulta la capacidad, el uso diario y administra los espacios de la universidad.</p>
+                </div>
+                <a href="{% url 'sala-create' %}" class="btn btn-success rounded-pill py-2 px-4">
+                    <i class="bi bi-plus-circle me-1"></i> Nueva Sala
+                </a>
+            </div>
 
-<div id="salas-container">
-    <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px">
-        <thead>
-            <tr style="background: #ecf0f1">
-                <th style="padding: 10px">ID</th>
-                <th style="padding: 10px">Número de Sala</th>
-                <th style="padding: 10px">Capacidad</th>
-                <th style="padding: 10px">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for sala in salas %}
-            <tr>
-                <td style="padding: 10px; text-align: center">{{ sala.id }}</td>
-                <td style="padding: 10px; text-align: center">
-                    Sala {{ sala.numero_sala }}
-                </td>
-                <td style="padding: 10px; text-align: center">
-                    {{ sala.capacidad }} personas
-                </td>
-                <td style="padding: 10px; text-align: center">
-                    <a href="{% url 'sala-detail' pk=sala.id %}" class="btn"
-                        >Ver Detalle</a
-                    >
-                </td>
-            </tr>
-            {% empty %}
-            <tr>
-                <td colspan="4" style="padding: 10px; text-align: center">
-                    No hay salas registradas.
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+            <!-- Tabla de Salas -->
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Número de Sala</th>
+                            <th>Capacidad Máxima</th>
+                            <th>Eventos Programados Hoy</th>
+                            <th class="text-end">Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for sala in salas %}
+                        <tr>
+                            <td>
+                                <div class="fw-bold text-dark fs-5">Sala {{ sala.numero_sala }}</div>
+                            </td>
+                            <td>
+                                <span class="fw-semibold"><i class="bi bi-people-fill text-muted me-1"></i>{{ sala.capacidad }} personas</span>
+                            </td>
+                            <td>
+                                {% if sala.eventos_hoy > 0 %}
+                                    <span class="badge bg-primary rounded-pill px-3 py-2">
+                                        {{ sala.eventos_hoy }} evento{% if sala.eventos_hoy != 1 %}s{% endif %} hoy
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-light text-muted border rounded-pill px-3 py-2">Sin eventos hoy</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <div class="btn-group">
+                                    <a href="{% url 'sala-editar' pk=sala.id %}" class="btn btn-outline-primary btn-sm rounded-3 me-2" title="Editar Sala">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <button
+                                        type="button"
+                                        class="btn btn-outline-danger btn-sm rounded-3"
+                                        title="Eliminar Sala"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal{{ sala.id }}"
+                                    >
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+                                </div>
 
-<!-- Ejemplo de integración con Vue para un componente interactivo -->
-<div style="margin-top: 40px; padding: 20px; border: 1px dashed #7f8c8d">
-    <h3>Prueba de Vue.js + Django</h3>
-    <p>Este contador es manejado por Vue.js dentro de la plantilla de Django.</p>
-    <button @click="count++" class="btn">Contador: [[ count ]]</button>
+                                <!-- Modal de Confirmación de Eliminación -->
+                                <div class="modal fade" id="deleteModal{{ sala.id }}" tabindex="-1" aria-hidden="true" style="text-align: left;">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content border-0 rounded-4 shadow">
+                                            <div class="modal-header border-0 pb-0">
+                                                <h5 class="modal-title fw-bold text-danger">⚠️ Confirmar Eliminación</h5>
+                                                <button type="button" class="btn-close" data-bs-close="modal" aria-label="Cerrar"></button>
+                                            </div>
+                                            <div class="modal-body py-3">
+                                                <p>¿Estás seguro de que deseas eliminar la <strong>Sala {{ sala.numero_sala }}</strong>?</p>
+                                                <div class="alert alert-warning border-0 rounded-3 mb-0">
+                                                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                                    <strong>Atención:</strong> Se eliminarán automáticamente todos los eventos agendados asociados a esta sala. Esta operación es irreversible.
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-0 pt-0">
+                                                <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancelar</button>
+                                                <form method="POST" action="{% url 'sala-eliminar' pk=sala.id %}" style="display: inline;">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-danger rounded-3 px-4">Eliminar Sala</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center py-5">
+                                <div class="text-muted mb-3">
+                                    <i class="bi bi-door-closed" style="font-size: 3rem;"></i>
+                                </div>
+                                <h5 class="fw-bold text-secondary">No hay salas registradas</h5>
+                                <p class="text-muted mb-3">Crea una nueva sala para habilitar reservaciones.</p>
+                                <a href="{% url 'sala-create' %}" class="btn btn-success rounded-pill py-2 px-4">
+                                    <i class="bi bi-plus-circle me-1"></i> Nueva Sala
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 </div>
-{% endblock %}
-<!--  -->
-{% block extra_js %}
-<script>
-    createApp({
-        delimiters: ["[[", "]]"],
-        data() {
-            return {
-                count: 0,
-            };
-        },
-    }).mount("#app");
-</script>
 {% endblock %}

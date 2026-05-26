@@ -40,6 +40,11 @@ class Sala(models.Model):
 class Evento(models.Model):
     """
     Modelo para los eventos programados en las salas.
+
+    Cambios respecto al diseño inicial:
+    - encargado: texto libre (nombre directo), ya no FK a la tabla encargados.
+    - reporte: texto simple que reemplaza el campo incidentes (array), el
+      reporte se puede sobreescribir.
     """
 
     nombre = models.TextField()
@@ -50,13 +55,15 @@ class Evento(models.Model):
     # Usando ArrayField de PostgreSQL como se indica en el DBML (text[]). Lo encuentras
     # en docs/database-design/database-design.dbml
     #
-    asistentes = ArrayField(models.TextField())
+    asistentes = ArrayField(models.TextField(), blank=True, default=list)
     requerimientos = ArrayField(models.TextField(), null=True, blank=True)
-    incidentes = ArrayField(models.TextField(), null=True, blank=True)
 
-    encargado = models.ForeignKey(
-        Encargado, on_delete=models.SET_NULL, null=True, db_column="encargado_id"
-    )
+    # Encargado: texto libre (nombre directo, sin FK)
+    encargado = models.TextField(blank=True, default="")
+
+    # Reporte simple: un texto por evento (reemplaza al array de incidentes)
+    reporte = models.TextField(blank=True, default="")
+
     sala = models.ForeignKey(Sala, on_delete=models.CASCADE, db_column="sala_id")
 
     class Meta:

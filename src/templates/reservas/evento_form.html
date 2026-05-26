@@ -1,0 +1,170 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Evento — Gestor de Salas{% endblock %}
+{% block page_title %}Nuevo Evento{% endblock %}
+
+{% block content %}
+
+<div class="card border-0 shadow-sm rounded-4">
+
+    <div class="card-body p-4">
+
+        <h2 class="fw-bold mb-4">
+            <i class="bi bi-plus-circle-fill me-2 text-primary"></i>Crear Evento
+        </h2>
+
+        {% if error %}
+        <div class="alert alert-danger d-flex align-items-start gap-3 rounded-3" role="alert">
+            <i class="bi bi-exclamation-octagon-fill fs-5 flex-shrink-0 mt-1"></i>
+            <div>
+                <div class="fw-semibold mb-1">No se pudo guardar el evento</div>
+                <div>{{ error }}</div>
+            </div>
+        </div>
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Nombre del Evento</label>
+                    <input type="text" class="form-control" name="nombre" placeholder="Ej: Conferencia de Innovación" required>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Fecha</label>
+                    <input type="date" class="form-control" name="fecha" required>
+                </div>
+
+                <!-- Hora inicio y fin -->
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Hora de Inicio</label>
+                    <input type="time" class="form-control" name="hora_inicio" required>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Hora de Fin</label>
+                    <input type="time" class="form-control" name="hora_fin" required>
+                </div>
+
+                <!-- Encargado: texto libre (nombre directo) -->
+                <div class="col-md-6 mb-3">
+                    <label class="form-label">Encargado</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="encargado"
+                        placeholder="Nombre del encargado"
+                        required
+                    >
+                </div>
+
+                <!-- Sala: select dinámico desde BD -->
+                <div class="col-md-3 mb-3">
+                    <label class="form-label">Sala</label>
+                    <select class="form-select" name="sala_id" required>
+                        <option value="" disabled selected>Selecciona una sala</option>
+                        {% for sala in salas %}
+                        <option value="{{ sala.id }}">Sala {{ sala.numero_sala }} ({{ sala.capacidad }} personas)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+            </div>
+
+            <hr>
+
+            <h4 class="fw-bold mt-4 mb-3">Requerimientos</h4>
+
+            <div class="row">
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="requerimientos" value="Equipo de Sonido" id="sonido">
+                        <label class="form-check-label" for="sonido">
+                            <i class="bi bi-speaker-fill me-1" style="color:#2563eb;"></i> Equipo de Sonido
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="requerimientos" value="Cafetería" id="cafeteria">
+                        <label class="form-check-label" for="cafeteria">
+                            <i class="bi bi-cup-hot-fill me-1" style="color:#2563eb;"></i> Cafetería
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="requerimientos" value="Video Conferencia" id="video">
+                        <label class="form-check-label" for="video">
+                            <i class="bi bi-camera-video-fill me-1" style="color:#2563eb;"></i> Video Conferencia
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="requerimientos" value="Acomodo de Sillas" id="sillas">
+                        <label class="form-check-label" for="sillas">
+                            <i class="bi bi-layout-three-columns me-1" style="color:#2563eb;"></i> Acomodo de Sillas
+                        </label>
+                    </div>
+                </div>
+
+                <div class="col-md-3 mb-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="requerimientos" value="Proyector" id="proyector">
+                        <label class="form-check-label" for="proyector">
+                            <i class="bi bi-projector-fill me-1" style="color:#2563eb;"></i> Proyector
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="d-flex gap-2 mt-4">
+                <button class="btn btn-primary px-4">
+                    <i class="bi bi-floppy-fill me-1"></i> Guardar Evento
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left me-1"></i> Cancelar
+                </a>
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fecha = urlParams.get('fecha');
+    const hora_inicio = urlParams.get('hora_inicio');
+    const hora_fin = urlParams.get('hora_fin');
+
+    if (fecha) {
+        const fechaInput = document.querySelector('input[name="fecha"]');
+        if (fechaInput) fechaInput.value = fecha;
+    }
+    if (hora_inicio) {
+        const inicioInput = document.querySelector('input[name="hora_inicio"]');
+        if (inicioInput) inicioInput.value = hora_inicio;
+    }
+    if (hora_fin) {
+        const finInput = document.querySelector('input[name="hora_fin"]');
+        if (finInput) finInput.value = hora_fin;
+    }
+});
+</script>
+{% endblock %}

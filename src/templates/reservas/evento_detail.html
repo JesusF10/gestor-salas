@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+
+{% block title %}Detalle de Evento — Gestor de Salas{% endblock %}
+{% block page_title %} Detalle de Evento{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Ficha de Información General -->
+    <div class="col-lg-8 mb-4">
+        <div class="card p-4 shadow-sm border-0 rounded-4">
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <span class="badge bg-primary rounded-pill mb-2 px-3 py-2">Sala {{ evento.numero_sala }}</span>
+                    <h2 class="fw-bold text-dark mb-1">{{ evento.nombre }}</h2>
+                    <p class="text-muted"><i class="bi bi-person-fill me-1"></i>Responsable: <strong>{{ evento.encargado }}</strong></p>
+                </div>
+
+                {% if user.is_authenticated %}
+                <div class="btn-group">
+                    <a href="{% url 'evento-editar' pk=evento.id %}" class="btn btn-outline-primary rounded-3 px-3 py-2 me-2">
+                        <i class="bi bi-pencil-fill me-1"></i> Editar
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+
+            <hr>
+
+            <!-- Horarios y Fecha -->
+            <div class="row mb-4">
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-4">
+                        <div class="fs-2 text-primary"><i class="bi bi-calendar-event"></i></div>
+                        <div>
+                            <span class="text-muted fs-7 d-block">Fecha Programada</span>
+                            <span class="fw-bold fs-5">{{ evento.fecha|date:"d F Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-4">
+                        <div class="fs-2 text-success"><i class="bi bi-clock"></i></div>
+                        <div>
+                            <span class="text-muted fs-7 d-block">Horario Reservado</span>
+                            <span class="fw-bold fs-5">{{ evento.hora_inicio|time:"H:i" }} - {{ evento.hora_fin|time:"H:i" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requerimientos del Evento -->
+            <h5 class="fw-bold text-primary mb-3"><i class="bi bi-tools me-2"></i>Insumos y Requerimientos</h5>
+            <div class="d-flex flex-wrap gap-2 mb-4">
+                {% for req in evento.requerimientos %}
+                    <span class="badge badge-req fs-6 py-2 px-3">{{ req }}</span>
+                {% empty %}
+                    <span class="text-muted">No se seleccionaron requerimientos ni insumos especiales para este evento.</span>
+                {% endfor %}
+            </div>
+
+            <!-- Botón de Retorno -->
+            <div class="mt-4 pt-2">
+                <a href="{% url 'eventos-lista' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                    <i class="bi bi-arrow-left me-1"></i> Volver a la Lista de Eventos
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Columna Lateral: Reportes -->
+    <div class="col-lg-4">
+        <div class="card p-4 shadow-sm border-0 rounded-4">
+            <h5 class="fw-bold text-primary mb-3">
+                <i class="bi bi-clipboard2-pulse me-2"></i>Reporte / Incidencias
+            </h5>
+
+            {% if evento.reporte %}
+                <div class="p-3 bg-light rounded-4 border-start border-warning border-4">
+                    <p class="mb-0 text-dark" style="white-space: pre-wrap;">{{ evento.reporte }}</p>
+                </div>
+            {% else %}
+                <div class="text-center py-4">
+                    <div class="text-muted mb-2"><i class="bi bi-journal-check" style="font-size: 2.5rem;"></i></div>
+                    <span class="text-muted fs-7 d-block">Sin incidencias registradas.</span>
+                </div>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <div class="mt-4 d-flex flex-column gap-2">
+                <button type="button" class="btn btn-warning w-100 rounded-3 text-white fw-semibold" data-bs-toggle="modal" data-bs-target="#reporteModal">
+                    <i class="bi bi-pencil-square me-1"></i> {% if evento.reporte %}Editar{% else %}Agregar{% endif %} Reporte
+                </button>
+                <a href="{% url 'reportes' %}" class="btn btn-outline-secondary w-100 rounded-3">
+                    <i class="bi bi-exclamation-triangle me-1"></i> Ir a Sección de Reportes
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+{% if user.is_authenticated %}
+<!-- Modal de Agregar/Editar Reporte -->
+<div class="modal fade" id="reporteModal" tabindex="-1" aria-hidden="true" style="text-align: left;">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow">
+            <form method="POST" action="{% url 'evento-reporte' pk=evento.id %}">
+                {% csrf_token %}
+                <div class="modal-header border-0 pb-0">
+                    <h5 class="modal-title fw-bold text-primary">{% if evento.reporte %}Editar{% else %}Agregar{% endif %} Reporte</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <div class="mb-3">
+                        <label for="reporte" class="form-label">Detalles de incidencias u observaciones</label>
+                        <textarea name="reporte" id="reporte" rows="5" class="form-control" placeholder="Escribe aquí notas sobre asistencia, incidentes o el estado de la sala..." required>{{ evento.reporte }}</textarea>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 pt-0">
+                    <button type="button" class="btn btn-light rounded-3" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary rounded-3 px-4">Guardar Reporte</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

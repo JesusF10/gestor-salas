@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard — Gestor de Salas{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+{% block content %}
+<div class="row">
+    <!-- =============================================
+         TARJETAS HORIZONTALES
+         ============================================= -->
+    <!-- Tarjeta: Eventos de Hoy por Sala -->
+    <div class="col-md-6 mb-4">
+        <div class="card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0 text-primary">
+                    <i class="bi bi-building me-2"></i>Eventos de Hoy por Sala
+                </h5>
+                <span class="badge bg-primary rounded-pill fs-6"
+                    >{{ total_hoy }} en total</span
+                >
+            </div>
+
+            <ul class="list-group list-group-flush">
+                {% for sala in salas %}
+                <li
+                    class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-2"
+                >
+                    <span class="fw-semibold text-secondary">Sala {{ sala.numero_sala }} (Capacidad: {{ sala.capacidad }})</span>
+                    <span class="badge bg-light text-dark border rounded-pill px-3">
+                        {{ sala.eventos_hoy }} evento{% if sala.eventos_hoy != 1 %}s{% endif %}
+                    </span>
+                </li>
+                {% empty %}
+                <li class="list-group-item text-center text-muted bg-transparent py-3">
+                    No hay salas registradas.
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Tarjeta: Eventos de esta Semana -->
+    <div class="col-md-6 mb-4">
+        <div class="card p-4 h-100">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="fw-bold mb-0 text-primary">
+                    <i class="bi bi-calendar3 me-2"></i>Próximos Eventos
+                </h5>
+                <span class="badge bg-success rounded-pill fs-6">
+                    {{ total_eventos_semana }} programado{% if total_eventos_semana != 1 %}s{% endif %}
+                </span>
+            </div>
+
+            <div style="max-height: 160px; overflow-y: auto">
+                <ul class="list-group list-group-flush">
+                    {% for ev in eventos_semana %}
+                    <li
+                        class="list-group-item d-flex justify-content-between align-items-center bg-transparent py-2"
+                    >
+                        <div>
+                            <a href="{% url 'evento-detail' pk=ev.id %}" class="fw-bold d-block text-primary text-decoration-none" style="font-weight: 600;">
+                                {{ ev.nombre }}
+                            </a>
+                            <small class="text-muted">🏢 Sala {{ ev.numero_sala }} | 🕒 {{ ev.hora_inicio|time:"H:i" }} - {{ ev.hora_fin|time:"H:i" }}</small>
+                        </div>
+                        <span
+                            class="badge bg-light text-primary border rounded-pill px-2 fs-7"
+                        >
+                            {{ ev.fecha|date:"d F Y" }}
+                        </span>
+                    </li>
+                    {% empty %}
+                    <li
+                        class="list-group-item text-center text-muted bg-transparent py-3"
+                    >
+                        No hay eventos programados para esta semana.
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- =============================================
+         CALENDARIO
+         ============================================= -->
+    <div class="col-12 mb-4">
+        <div class="card p-4 shadow-sm border-0 rounded-4">
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+                <h5 class="fw-bold mb-0 text-primary">
+                    <i class="bi bi-calendar-range me-2"></i>Calendario
+                </h5>
+                <div class="btn-group" role="group" aria-label="Filtrar por Sala">
+                    <button type="button" class="btn btn-sm btn-outline-primary active btn-filter-sala" data-sala="all">Todas las Salas</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary btn-filter-sala" data-sala="1">Sala 1</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary btn-filter-sala" data-sala="2">Sala 2</button>
+                    <button type="button" class="btn btn-sm btn-outline-primary btn-filter-sala" data-sala="3">Sala 3</button>
+                </div>
+            </div>
+            <div id="calendar" data-authenticated="{% if user.is_authenticated %}true{% else %}false{% endif %}"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para el horario del día seleccionado -->
+<div class="modal fade" id="dayScheduleModal" tabindex="-1" aria-labelledby="dayScheduleModalLabel" aria-hidden="true" style="text-align: left;">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 rounded-4 shadow-lg">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-primary" id="dayScheduleModalLabel">
+                    <i class="bi bi-calendar-day me-2"></i>Horario del Día: <span id="modal-date-title" class="text-secondary"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body py-3">
+                <div id="modal-day-calendar"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

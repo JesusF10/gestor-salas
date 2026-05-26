@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Reportes de Eventos — Gestor de Salas{% endblock %}
+{% block page_title %}Reportes{% endblock %}
+
+{% block content %}
+
+<div class="card shadow-sm border-0 rounded-4 p-4">
+
+    <h2 class="fw-bold text-primary mb-4">
+        <i class="bi bi-clipboard2-data-fill me-2"></i>Reportes de Eventos
+    </h2>
+
+    {% if eventos %}
+
+        {% for evento in eventos %}
+
+        <div class="card mb-4 p-4">
+
+            <h4 class="fw-bold">{{ evento.nombre }}</h4>
+
+            <p class="mb-2">
+                📅 {{ evento.fecha }} &nbsp;|&nbsp;
+                🕒 {{ evento.hora_inicio }} – {{ evento.hora_fin }} &nbsp;|&nbsp;
+                🏢 Sala {{ evento.numero_sala }}
+            </p>
+
+            <form method="POST" action="{% url 'evento-reporte' pk=evento.id %}">
+
+                {% csrf_token %}
+
+                <label class="fw-bold mb-2">Reporte / Incidente</label>
+
+                <textarea
+                    class="form-control mb-3"
+                    rows="4"
+                    name="reporte"
+                    placeholder="Escribe aquí el reporte o incidente del evento..."
+                >{{ evento.reporte }}</textarea>
+
+                <button type="submit" class="btn btn-success px-4">
+                    💾 Guardar Reporte
+                </button>
+
+            </form>
+
+            {% if evento.reporte %}
+            <div class="alert alert-success mt-3 mb-0 py-2 px-3 rounded-3">
+                <small>✅ Este evento ya tiene reporte guardado.</small>
+            </div>
+            {% endif %}
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="text-center p-5">
+            <i class="bi bi-clipboard-x" style="font-size:3rem;color:#cbd5e1;"></i>
+            <h4 class="text-secondary mt-3">No hay eventos registrados</h4>
+            <a href="{% url 'evento-create' %}" class="btn btn-primary mt-3">
+                <i class="bi bi-plus-circle me-1"></i> Crear primer evento
+            </a>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}
