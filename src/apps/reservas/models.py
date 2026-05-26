@@ -2,24 +2,6 @@ from django.contrib.postgres.fields import ArrayField
 from django.db import models
 
 
-class Encargado(models.Model):
-    """
-    Modelo para los encargados de los eventos.
-    """
-
-    nombre = models.TextField()
-    primerapellido = models.TextField()
-    segundoapellido = models.TextField(null=True, blank=True)
-
-    class Meta:
-        db_table = "encargados"
-        verbose_name = "encargado"
-        verbose_name_plural = "encargados"
-
-    def __str__(self) -> str:
-        return f"{self.nombre} {self.primerapellido}"
-
-
 class Sala(models.Model):
     """
     Modelo para las salas disponibles.
@@ -45,6 +27,7 @@ class Evento(models.Model):
     - encargado: texto libre (nombre directo), ya no FK a la tabla encargados.
     - reporte: texto simple que reemplaza el campo incidentes (array), el
       reporte se puede sobreescribir.
+    - asistentes: entero para indicar la cantidad de asistentes.
     """
 
     nombre = models.TextField()
@@ -52,10 +35,8 @@ class Evento(models.Model):
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
 
-    # Usando ArrayField de PostgreSQL como se indica en el DBML (text[]). Lo encuentras
-    # en docs/database-design/database-design.dbml
-    #
-    asistentes = ArrayField(models.TextField(), blank=True, default=list)
+    # Cambiado de ArrayField a IntegerField para representar el conteo de asistentes
+    asistentes = models.IntegerField(default=0)
     requerimientos = ArrayField(models.TextField(), null=True, blank=True)
 
     # Encargado: texto libre (nombre directo, sin FK)

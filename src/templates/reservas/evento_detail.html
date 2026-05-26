@@ -12,7 +12,10 @@
                 <div>
                     <span class="badge bg-primary rounded-pill mb-2 px-3 py-2">Sala {{ evento.numero_sala }}</span>
                     <h2 class="fw-bold text-dark mb-1">{{ evento.nombre }}</h2>
-                    <p class="text-muted"><i class="bi bi-person-fill me-1"></i>Responsable: <strong>{{ evento.encargado }}</strong></p>
+                    <div class="d-flex flex-wrap gap-3">
+                        <p class="text-muted mb-0"><i class="bi bi-person-fill me-1"></i>Responsable: <strong>{{ evento.encargado }}</strong></p>
+                        <p class="text-muted mb-0"><i class="bi bi-people-fill me-1"></i>Asistentes: <strong>{{ evento.asistentes }}</strong> / Capacidad: <strong>{{ evento.capacidad }} personas</strong></p>
+                    </div>
                 </div>
 
                 {% if user.is_authenticated %}

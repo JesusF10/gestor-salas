@@ -206,6 +206,21 @@ def evento_create_view(request: Any) -> Any:
         encargado = datos.get("encargado", "").strip()
         requerimientos: list[str] = datos.getlist("requerimientos")
 
+        asistentes_raw = datos.get("asistentes", "0").strip()
+        try:
+            asistentes = int(asistentes_raw) if asistentes_raw else 0
+            if asistentes <= 0:
+                raise ValueError()
+        except ValueError:
+            return render(
+                request,
+                "reservas/evento_form.html",
+                {
+                    "error": "La cantidad de asistentes debe ser un número entero positivo.",
+                    "salas": salas,
+                },
+            )
+
         # Validar sala seleccionada
         if not sala_id_raw:
             return render(
@@ -218,6 +233,18 @@ def evento_create_view(request: Any) -> Any:
             )
 
         sala_id = int(sala_id_raw)
+
+        # Validar capacidad de la sala seleccionada
+        sala = obtener_sala_sql(sala_id)
+        if sala and asistentes > sala.get("capacidad", 0):
+            return render(
+                request,
+                "reservas/evento_form.html",
+                {
+                    "error": f"La cantidad de asistentes ({asistentes}) supera la capacidad máxima de la Sala {sala['numero_sala']} ({sala['capacidad']} personas).",
+                    "salas": salas,
+                },
+            )
 
         # Validar duración mínima (≥20 minutos, igual que el equipo)
         if hora_inicio and hora_fin:
@@ -260,6 +287,7 @@ def evento_create_view(request: Any) -> Any:
                 encargado=encargado,
                 sala_id=sala_id,
                 requerimientos=requerimientos,
+                asistentes=asistentes,
             )
             return redirect("dashboard")
 
@@ -307,6 +335,22 @@ def evento_editar_view(request: Any, pk: int) -> Any:
         encargado = datos.get("encargado", "").strip()
         requerimientos: list[str] = datos.getlist("requerimientos")
 
+        asistentes_raw = datos.get("asistentes", "0").strip()
+        try:
+            asistentes = int(asistentes_raw) if asistentes_raw else 0
+            if asistentes <= 0:
+                raise ValueError()
+        except ValueError:
+            return render(
+                request,
+                "reservas/evento_editar.html",
+                {
+                    "error": "La cantidad de asistentes debe ser un número entero positivo.",
+                    "evento": evento,
+                    "salas": salas,
+                },
+            )
+
         if not sala_id_raw:
             return render(
                 request,
@@ -319,6 +363,19 @@ def evento_editar_view(request: Any, pk: int) -> Any:
             )
 
         sala_id = int(sala_id_raw)
+
+        # Validar capacidad de la sala seleccionada
+        sala = obtener_sala_sql(sala_id)
+        if sala and asistentes > sala.get("capacidad", 0):
+            return render(
+                request,
+                "reservas/evento_editar.html",
+                {
+                    "error": f"La cantidad de asistentes ({asistentes}) supera la capacidad máxima de la Sala {sala['numero_sala']} ({sala['capacidad']} personas).",
+                    "evento": evento,
+                    "salas": salas,
+                },
+            )
 
         # Validar duración mínima (≥20 minutos)
         if hora_inicio and hora_fin:
@@ -365,6 +422,7 @@ def evento_editar_view(request: Any, pk: int) -> Any:
                 encargado=encargado,
                 requerimientos=requerimientos,
                 sala_id=sala_id,
+                asistentes=asistentes,
             )
             return redirect("dashboard")
 

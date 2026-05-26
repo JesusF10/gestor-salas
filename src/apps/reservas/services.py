@@ -14,7 +14,6 @@ from typing import Any
 
 from django.db import connection
 
-
 # =============================================================================
 # SALAS
 # =============================================================================
@@ -86,7 +85,9 @@ def eliminar_sala_sql(sala_id: int) -> None:
         cursor.execute(query, [sala_id])
 
 
-def verificar_colision_sala_sql(numero_sala: int, excluir_sala_id: int | None = None) -> bool:
+def verificar_colision_sala_sql(
+    numero_sala: int, excluir_sala_id: int | None = None
+) -> bool:
     """
     Verifica si ya existe una sala con el número indicado.
     """
@@ -147,7 +148,9 @@ def verificar_colision_sql(
                     AND id != %s
                 );
             """
-            cursor.execute(query, [sala_id, fecha, hora_fin, hora_inicio, excluir_evento_id])
+            cursor.execute(
+                query, [sala_id, fecha, hora_fin, hora_inicio, excluir_evento_id]
+            )
         else:
             query = """
                 SELECT EXISTS (
@@ -172,6 +175,7 @@ def crear_evento_sql(
     encargado: str,
     sala_id: int,
     requerimientos: list[str] | None = None,
+    asistentes: int = 0,
 ) -> int:
     """
     Inserta un nuevo evento en la base de datos.
@@ -196,8 +200,8 @@ def crear_evento_sql(
             encargado,
             sala_id,
             requerimientos or [],
-            [],     # asistentes vacío por defecto
-            "",     # reporte vacío al crear
+            asistentes,
+            "",  # reporte vacío al crear
         ]
         cursor.execute(query, params)
         row = cursor.fetchone()
@@ -229,6 +233,7 @@ def listar_eventos_sql() -> list[dict[str, Any]]:
                 e.requerimientos,
                 e.reporte,
                 e.sala_id,
+                e.asistentes,
                 s.numero_sala
             FROM eventos e
             INNER JOIN salas s ON e.sala_id = s.id
@@ -282,7 +287,9 @@ def obtener_evento_sql(evento_id: int) -> dict[str, Any] | None:
                 e.requerimientos,
                 e.reporte,
                 e.sala_id,
-                s.numero_sala
+                e.asistentes,
+                s.numero_sala,
+                s.capacidad
             FROM eventos e
             INNER JOIN salas s ON e.sala_id = s.id
             WHERE e.id = %s;
@@ -311,6 +318,7 @@ def actualizar_evento_sql(
     encargado: str,
     requerimientos: list[str],
     sala_id: int,
+    asistentes: int,
 ) -> None:
     """
     Actualiza los datos de un evento existente por su ID.
@@ -326,7 +334,8 @@ def actualizar_evento_sql(
                 hora_fin       = %s,
                 encargado      = %s,
                 requerimientos = %s,
-                sala_id        = %s
+                sala_id        = %s,
+                asistentes     = %s
             WHERE id = %s;
         """
         params: list[Any] = [
@@ -337,6 +346,7 @@ def actualizar_evento_sql(
             encargado,
             requerimientos,
             sala_id,
+            asistentes,
             evento_id,
         ]
         cursor.execute(query, params)
@@ -457,6 +467,7 @@ def buscar_eventos_sql(
                 e.requerimientos,
                 e.reporte,
                 e.sala_id,
+                e.asistentes,
                 s.numero_sala,
                 s.capacidad
             FROM eventos e
