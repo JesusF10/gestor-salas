@@ -1,14 +1,5 @@
 /**
- * calendar.js — Inicialización de FullCalendar con datos reales del backend.
- *
- * Mejoras aplicadas:
- * 1. Coloreado dinámico de eventos por sala (vibrantes con texto blanco).
- * 2. Redirección a la vista de detalles al hacer click.
- * 3. Filtrado rápido de salas en tiempo real.
- * 4. Apertura de un modal flotante con el horario completo del día al hacer click
- *    en un día de la vista mensual o semanal.
- * 5. Eliminación de la vista diaria del toolbar principal, ya que está contenida en el modal.
- * 6. Selección y reserva rápida de bloques horarios directamente dentro del modal diario.
+ * calendar.js
  */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -42,13 +33,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // Función para abrir el modal flotante diario
     function abrirModalDia(clickedDate) {
         if (!bsModal) return;
-        
+
         // Título amigable en el modal
         document.getElementById('modal-date-title').textContent = formatearFechaEspanol(clickedDate);
-        
+
         // Guardar fecha seleccionada en el elemento modal
         modalEl.setAttribute('data-selected-date', clickedDate);
-        
+
         // Mostrar modal de Bootstrap
         bsModal.show();
     }
@@ -98,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 '3': { bg: '#8b5cf6', border: '#6d28d9', text: '#ffffff' }  // Sala 3: Violeta/Morado
             };
             const config = colors[String(eventData.numero_sala)] || { bg: '#4b5563', border: '#374151', text: '#ffffff' };
-            
+
             eventData.backgroundColor = config.bg;
             eventData.borderColor = config.border;
             eventData.textColor = config.text;
@@ -131,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function () {
         modalEl.addEventListener('shown.bs.modal', function () {
             const selectedDate = modalEl.getAttribute('data-selected-date');
             const modalCalendarEl = document.getElementById('modal-day-calendar');
-            
+
             if (!modalCalendarEl || !selectedDate) return;
 
             // Destruir instancia anterior si existe
@@ -232,10 +223,10 @@ document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll('.btn-filter-sala').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             salaFilter = this.getAttribute('data-sala');
-            
+
             // Actualizar calendario principal
             calendar.refetchEvents();
-            
+
             // Si el modal está abierto, también actualizar el del modal
             if (modalCalendar) {
                 modalCalendar.refetchEvents();

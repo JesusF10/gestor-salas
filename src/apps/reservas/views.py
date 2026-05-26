@@ -246,7 +246,7 @@ def evento_create_view(request: Any) -> Any:
                 },
             )
 
-        # Validar duración mínima (≥20 minutos, igual que el equipo)
+        # Validar duración mínima
         if hora_inicio and hora_fin:
             h_ini = int(hora_inicio.split(":")[0]) * 60 + int(hora_inicio.split(":")[1])
             h_fin = int(hora_fin.split(":")[0]) * 60 + int(hora_fin.split(":")[1])
@@ -543,7 +543,7 @@ def eventos_lista_view(request: Any) -> Any:
         requerimiento=requerimiento,
     )
 
-    # Salas para el select de filtro (incluye eventos_hoy pero no lo usamos aquí)
+    # Salas para el select de filtro
     salas = listar_salas_sql()
 
     # Cantidad total de resultados para mostrar en el encabezado

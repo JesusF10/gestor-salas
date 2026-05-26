@@ -24,7 +24,7 @@ class Evento(models.Model):
     Modelo para los eventos programados en las salas.
 
     Cambios respecto al diseño inicial:
-    - encargado: texto libre (nombre directo), ya no FK a la tabla encargados.
+    - encargado: texto libre (nombre directo).
     - reporte: texto simple que reemplaza el campo incidentes (array), el
       reporte se puede sobreescribir.
     - asistentes: entero para indicar la cantidad de asistentes.
@@ -35,14 +35,13 @@ class Evento(models.Model):
     hora_inicio = models.TimeField()
     hora_fin = models.TimeField()
 
-    # Cambiado de ArrayField a IntegerField para representar el conteo de asistentes
     asistentes = models.IntegerField(default=0)
     requerimientos = ArrayField(models.TextField(), null=True, blank=True)
 
-    # Encargado: texto libre (nombre directo, sin FK)
+    # Encargado: texto libre
     encargado = models.TextField(blank=True, default="")
 
-    # Reporte simple: un texto por evento (reemplaza al array de incidentes)
+    # Reporte simple: un texto por evento
     reporte = models.TextField(blank=True, default="")
 
     sala = models.ForeignKey(Sala, on_delete=models.CASCADE, db_column="sala_id")

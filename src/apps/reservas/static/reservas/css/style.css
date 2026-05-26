@@ -1,6 +1,5 @@
 /* =========================================================
    Sistema Gestor de Salas — Hoja de estilos principal
-   Fusión: diseño equipo (Frontend_modificado) + nuestras extensiones
    ========================================================= */
 
 /* Tipografía base */
@@ -35,7 +34,7 @@ body {
     margin-bottom: 30px;
 }
 
-/* Subtítulo del sidebar (extensión nuestra) */
+/* Subtítulo del sidebar */
 .sidebar-subtitle {
     color: rgba(255, 255, 255, 0.55);
     font-size: 0.72rem;
@@ -91,7 +90,7 @@ body {
     font-weight: 700;
 }
 
-/* Topbar (alias nuestro para la misma navbar) */
+/* Topbar */
 .topbar {
     border-bottom: 1px solid #dbeafe;
     background: white;

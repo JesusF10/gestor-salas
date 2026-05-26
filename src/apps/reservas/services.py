@@ -60,7 +60,7 @@ def obtener_sala_sql(sala_id: int) -> dict[str, Any] | None:
 
 def crear_sala_sql(numero_sala: int, capacidad: int) -> None:
     """
-    Inserta una nueva sala en la base de datos mediante DML SQL puro.
+    Inserta una nueva sala en la base de datos mediante DML SQL.
     """
     with connection.cursor() as cursor:
         query = "INSERT INTO salas (numero_sala, capacidad) VALUES (%s, %s);"
@@ -69,7 +69,7 @@ def crear_sala_sql(numero_sala: int, capacidad: int) -> None:
 
 def actualizar_sala_sql(sala_id: int, numero_sala: int, capacidad: int) -> None:
     """
-    Actualiza una sala existente en la base de datos mediante DML SQL puro.
+    Actualiza una sala existente en la base de datos mediante DML SQL.
     """
     with connection.cursor() as cursor:
         query = "UPDATE salas SET numero_sala = %s, capacidad = %s WHERE id = %s;"
@@ -78,7 +78,7 @@ def actualizar_sala_sql(sala_id: int, numero_sala: int, capacidad: int) -> None:
 
 def eliminar_sala_sql(sala_id: int) -> None:
     """
-    Elimina una sala de la base de datos mediante DML SQL puro.
+    Elimina una sala de la base de datos mediante DML SQL.
     """
     with connection.cursor() as cursor:
         query = "DELETE FROM salas WHERE id = %s;"
@@ -495,7 +495,7 @@ def listar_eventos_semana_sql() -> list[dict[str, Any]]:
                 s.numero_sala
             FROM eventos e
             INNER JOIN salas s ON e.sala_id = s.id
-            WHERE e.fecha BETWEEN (date_trunc('week', CURRENT_DATE)::date) 
+            WHERE e.fecha BETWEEN (date_trunc('week', CURRENT_DATE)::date)
                              AND (date_trunc('week', CURRENT_DATE)::date + 6)
             ORDER BY e.fecha ASC, e.hora_inicio ASC;
         """
